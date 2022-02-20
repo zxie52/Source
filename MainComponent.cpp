@@ -67,7 +67,11 @@ void MainComponent::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
+    // The assignment from the 6.3
+    g.setFont(20.0f);
+    g.drawText("Hello from South Bend",
+                getLocalBounds(),
+                juce::Justification::centred, true);
     // You can add your drawing code here!
 }
 
