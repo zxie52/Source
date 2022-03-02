@@ -1,5 +1,12 @@
-#include "MainComponent.h"
+/*
+  ==============================================================================
 
+    This file was auto-generated!
+
+  ==============================================================================
+*/
+
+#include "MainComponent.h"
 //==============================================================================
 MainComponent::MainComponent()
 {
@@ -9,20 +16,32 @@ MainComponent::MainComponent()
 
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
-        && ! juce::RuntimePermissions::isGranted (juce::RuntimePermissions::recordAudio))
+        && !juce::RuntimePermissions::isGranted (juce::RuntimePermissions::recordAudio))
     {
         juce::RuntimePermissions::request (juce::RuntimePermissions::recordAudio,
-                                           [&] (bool granted) { setAudioChannels (granted ? 2 : 0, 2); });
-    }
+                                     [&] (bool granted) { if (granted)  setAudioChannels (2, 2); });
+    }  
     else
     {
         // Specify the number of input and output channels that we want to open
-        setAudioChannels (2, 2);
+        setAudioChannels (0, 2);
     }
 
     addAndMakeVisible(playButton);
+    addAndMakeVisible(stopButton);
+    addAndMakeVisible(loadButton);
+       
     addAndMakeVisible(volSlider);
+    addAndMakeVisible(speedSlider);
+    
+    playButton.addListener(this);
+    stopButton.addListener(this);
+    loadButton.addListener(this);
+    volSlider.addListener(this);
+    speedSlider.addListener(this);
 
+    volSlider.setRange(0.0, 1.0);
+    
 }
 
 MainComponent::~MainComponent()
@@ -34,24 +53,24 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
+    phase = 0.0;
+    dphase = 0.0001;
 
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
+    formatManager.registerBasicFormats();
 
-    // For more details, see the help for AudioProcessor::prepareToPlay()
-}
 
+    transportSource.prepareToPlay(
+        samplesPerBlockExpected, 
+        sampleRate);
+    resampleSource.prepareToPlay(
+        samplesPerBlockExpected, 
+        sampleRate);
+
+ }
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    // Your audio-processing code goes here!
-
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    bufferToFill.clearActiveBufferRegion();
+    //transportSource.getNextAudioBlock(bufferToFill);
+    resampleSource.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -60,6 +79,7 @@ void MainComponent::releaseResources()
     // restarted due to a setting change.
 
     // For more details, see the help for AudioProcessor::releaseResources()
+    transportSource.releaseResources();
 }
 
 //==============================================================================
@@ -67,11 +87,7 @@ void MainComponent::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-    // The assignment from the 6.3
-    g.setFont(20.0f);
-    g.drawText("Hello from South Bend",
-                getLocalBounds(),
-                juce::Justification::centred, true);
+
     // You can add your drawing code here!
 }
 
@@ -80,10 +96,66 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-
-    double rowH = getHeight() / 5;
-    
+    double rowH = getHeight() / 5; 
     playButton.setBounds(0, 0, getWidth(), rowH);
-    volSlider.setBounds(0, rowH, getWidth(), rowH);
+    stopButton.setBounds(0, rowH, getWidth(), rowH);
+    
+    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
+    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
+
+    loadButton.setBounds(0, rowH * 4, getWidth(), rowH);
+
+}
+
+void MainComponent::buttonClicked(juce::Button* button)
+{
+    if (button == &playButton)
+    {
+        std::cout << "Play button was clicked " << std::endl;
+        transportSource.start();
+    }
+     if (button == &stopButton)
+    {
+        std::cout << "Stop button was clicked " << std::endl;
+        transportSource.stop();
+
+    }
+    if (button == &loadButton)
+    {
+        juce::FileChooser chooser{ "What file do you want..." };
+        if(chooser.browseForFileToOpen())
+        {
+            loadURL(juce::URL{chooser.getResult()});
+        }
+    }
+}
+
+void MainComponent::sliderValueChanged (juce::Slider *slider)
+{
+    if (slider == &volSlider)
+    {
+        transportSource.setGain(slider->getValue());
+    }
+
+    if (slider == &speedSlider)
+    {
+        resampleSource.setResamplingRatio(slider->getValue());
+
+        
+    }
+
+}
+
+void MainComponent::loadURL(juce::URL audioURL)
+{
+
+    auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
+    if (reader != nullptr) // good file!
+    {       
+        std::unique_ptr<juce::AudioFormatReaderSource> newSource (new juce::AudioFormatReaderSource (reader,
+true)); 
+        transportSource.setSource (newSource.get(), 0, nullptr, reader->sampleRate);             
+        readerSource.reset (newSource.release());          
+    }
 
 }

@@ -1,7 +1,9 @@
 /*
   ==============================================================================
 
-    This file contains the basic startup code for a JUCE application.
+    This file was auto-generated!
+
+    It contains the basic startup code for a JUCE application.
 
   ==============================================================================
 */
@@ -15,17 +17,16 @@ class NewProjectApplication  : public juce::JUCEApplication
 public:
     //==============================================================================
     NewProjectApplication() {}
-
     const juce::String getApplicationName() override       { return ProjectInfo::projectName; }
     const juce::String getApplicationVersion() override    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed() override             { return true; }
+    bool moreThanOneInstanceAllowed() override       { return true; }
 
     //==============================================================================
     void initialise (const juce::String& commandLine) override
     {
         // This method is where you should put your application's initialisation code..
 
-        mainWindow.reset (new MainWindow (getApplicationName()));
+        mainWindow.reset(new MainWindow(getApplicationName()));
     }
 
     void shutdown() override
@@ -58,11 +59,10 @@ public:
     class MainWindow    : public juce::DocumentWindow
     {
     public:
-        MainWindow (juce::String name)
-            : DocumentWindow (name,
-                              juce::Desktop::getInstance().getDefaultLookAndFeel()
-                                                          .findColour (juce::ResizableWindow::backgroundColourId),
-                              DocumentWindow::allButtons)
+        MainWindow (juce::String name)  : DocumentWindow (name,
+                                            juce::Desktop::getInstance().getDefaultLookAndFeel()
+                                                                          .findColour (ResizableWindow::backgroundColourId),
+                                                    DocumentWindow::allButtons)
         {
             setUsingNativeTitleBar (true);
             setContentOwned (new MainComponent(), true);
