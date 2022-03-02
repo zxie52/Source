@@ -27,24 +27,8 @@ MainComponent::MainComponent()
         setAudioChannels (0, 2);
     }
 
-    addAndMakeVisible(playButton);
-    addAndMakeVisible(stopButton);
-    addAndMakeVisible(loadButton);
-       
-    addAndMakeVisible(volSlider);
-    addAndMakeVisible(speedSlider);
-    addAndMakeVisible(posSlider);
-    
-    playButton.addListener(this);
-    stopButton.addListener(this);
-    loadButton.addListener(this);
-
-    volSlider.addListener(this);
-    speedSlider.addListener(this);
-    posSlider.addListener(this);
-
-    volSlider.setRange(0.0, 1.0);
-    posSlider.setRange(0.0, 1.0);
+    addAndMakeVisible(deckGUI1);
+    addAndMakeVisible(deckGUI2);
 }
 
 MainComponent::~MainComponent()
@@ -57,11 +41,15 @@ MainComponent::~MainComponent()
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     player1.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    player2.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    mixerSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 
+    mixerSource.addInputSource(&player1, false);
+    mixerSource.addInputSource(&player2, false);
  }
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    player1.getNextAudioBlock(bufferToFill);
+    mixerSource.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -71,6 +59,8 @@ void MainComponent::releaseResources()
 
     // For more details, see the help for AudioProcessor::releaseResources()
     player1.releaseResources();
+    player2.releaseResources();
+    mixerSource.releaseResources();
 }
 
 //==============================================================================
@@ -79,7 +69,6 @@ void MainComponent::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    // You can add your drawing code here!
 }
 
 void MainComponent::resized()
@@ -87,53 +76,7 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    double rowH = getHeight() / 6; 
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);
-    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
-    posSlider.setBounds(0, rowH * 4, getWidth(), rowH);
-    loadButton.setBounds(0, rowH * 5, getWidth(), rowH);
-}
-
-void MainComponent::buttonClicked(juce::Button* button)
-{
-    if (button == &playButton)
-    {
-        std::cout << "Play button was clicked " << std::endl;
-        player1.start();
-    }
-     if (button == &stopButton)
-    {
-        std::cout << "Stop button was clicked " << std::endl;
-        player1.stop();
-
-    }
-    if (button == &loadButton)
-    {
-        juce::FileChooser chooser{ "What file do you want..." };
-        if(chooser.browseForFileToOpen())
-        {
-            player1.loadURL(juce::URL{chooser.getResult()});
-        }
-    }
-}
-
-void MainComponent::sliderValueChanged (juce::Slider *slider)
-{
-    if (slider == &volSlider)
-    {
-        player1.setGain(slider->getValue());
-    }
-
-    if (slider == &speedSlider)
-    {
-        player1.setSpeed(slider->getValue());
-    }
-
-    if (slider == &posSlider)
-    {
-        player1.setPositionRelative(slider->getValue());
-    }
+    deckGUI1.setBounds(0, 0, getWidth() / 2, getHeight());
+    deckGUI2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
