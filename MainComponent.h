@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "DJApplication.h"
 
 //==============================================================================
 /*
@@ -41,30 +42,15 @@ public:
 
 private:
     //==============================================================================
-    // Your private member variables go here...
+    // Your private member variables go here
+    juce::TextButton playButton{ "PLAY" };
+    juce::TextButton stopButton{ "STOP" };
+    juce::TextButton loadButton{ "LOAD" };
 
-    juce::TextButton playButton{"PLAY"};
-    juce::TextButton stopButton{"STOP"};
-    juce::TextButton loadButton{"LOAD"};
-  
     juce::Slider volSlider;
     juce::Slider speedSlider;
-    
-    juce::Random rand;
 
-    double phase; 
-    double dphase;
-
-    juce::AudioFormatManager formatManager;
-
-    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-
-    juce::AudioTransportSource transportSource;
-    juce::ResamplingAudioSource resampleSource{&transportSource, false, 2};
-
-    void loadURL(juce::URL audioURL);
-
-
+    DJApplication player1{};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
