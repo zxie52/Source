@@ -49,6 +49,7 @@ private:
 
     juce::Slider volSlider;
     juce::Slider speedSlider;
+    juce::Slider posSlider;
 
     DJApplication player1{};
 

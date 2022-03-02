@@ -54,14 +54,23 @@ void DJApplication::setGain(double gain) {
 }
 void DJApplication::setSpeed(double ratio) {
     if (ratio < 0 || ratio > 100.0) {
-        DBG("DJApplication::setSpped the ratio should be between 0 and 1!");
+        DBG("DJApplication::setSpeed the ratio should be between 0 and 1!");
     }
     else {
         resampleSource.setResamplingRatio(ratio);
     }
 }
 void DJApplication::setPosition(double posInSecs) {
-
+    transportSource.setPosition(posInSecs);
+}
+void DJApplication::setPositionRelative(double pos) {
+    if (pos < 0 || pos > 1.0) {
+        DBG("DJApplication::setPositionRelative the ratio should be between 0 and 1!");
+    }
+    else {
+        double posInSecs = transportSource.getLengthInSeconds() * pos;
+        setPosition(posInSecs);
+    }
 }
 
 void DJApplication::start() {
