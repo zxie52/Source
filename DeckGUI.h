@@ -12,16 +12,20 @@
 
 #include <JuceHeader.h>
 #include "DJApplication.h"
+#include "WaveformDisplay.h"
 
 //==============================================================================
 /*
 */
 class DeckGUI  : public juce::Component,
                  public juce::Button::Listener,
-                 public juce::Slider::Listener
+                 public juce::Slider::Listener,
+                 public juce::FileDragAndDropTarget
 {
 public:
-    DeckGUI(DJApplication* player);
+    DeckGUI(DJApplication* player,
+            juce::AudioFormatManager &formatManagerToUse,
+            juce::AudioThumbnailCache &cacheToUse);
     ~DeckGUI() override;
 
     void paint (juce::Graphics&) override;
@@ -32,6 +36,11 @@ public:
 
     /** implement Slider::Listener */
     void sliderValueChanged(juce::Slider* slider) override;
+
+    // implement drag function
+    bool isInterestedInFileDrag(const juce::StringArray& files) override;
+    void filesDropped(const juce::StringArray& files, int x, int y) override;
+
 private:
 
     // Your private member variables go here
@@ -44,6 +53,8 @@ private:
     juce::Slider posSlider;
 
     DJApplication* player;
+
+    WaveformDisplay waveformDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };
