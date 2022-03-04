@@ -15,7 +15,8 @@
 //==============================================================================
 /*
 */
-class WaveformDisplay  : public juce::Component
+class WaveformDisplay  : public juce::Component,
+                         public juce::ChangeListener
 {
 public:
     WaveformDisplay(juce::AudioFormatManager& formatManagerToUse,
@@ -27,9 +28,15 @@ public:
 
     void loadURL(juce::URL);
 
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+
+    // set the relaive position of the playhead
+    void setPositionRelative(double pos);
+
 private:
     juce::AudioThumbnail audioThumb;
     bool fileLoaded;
+    double position;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformDisplay)
 };

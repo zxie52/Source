@@ -17,7 +17,9 @@ WaveformDisplay::WaveformDisplay(juce::AudioFormatManager& formatManagerToUse,
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
+    audioThumb.addChangeListener(this);
+    fileLoaded = false;
+    position = 0;
 }
 
 WaveformDisplay::~WaveformDisplay()
@@ -41,6 +43,8 @@ void WaveformDisplay::paint (juce::Graphics& g)
     g.setColour (juce::Colours::purple);
     if (fileLoaded) {
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1.0f);
+        g.setColour(juce::Colours::orange);
+        g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
     }
     else {
         g.setFont(20.0f);
@@ -57,6 +61,14 @@ void WaveformDisplay::resized()
 
 }
 
+void WaveformDisplay::setPositionRelative(double pos) {
+    if (pos != position) {
+        position = pos;
+        repaint();
+    }
+
+}
+
 void WaveformDisplay::loadURL(juce::URL audioURL) {
     DBG("WaveformDisplay::loadURL");
 
@@ -68,4 +80,8 @@ void WaveformDisplay::loadURL(juce::URL audioURL) {
     else {
         std::cout << "The music file is not loaded yet." << std::endl;
     }
+}
+
+void WaveformDisplay::changeListenerCallback(juce::ChangeBroadcaster* source) {
+    repaint();
 }

@@ -15,7 +15,7 @@ class DJApplication : public juce::AudioSource{
     
 public:
     //==============================================================================
-    DJApplication();
+    DJApplication(juce::AudioFormatManager &_formatManager);
     ~DJApplication();
 
     //==============================================================================
@@ -32,9 +32,12 @@ public:
     void start();
     void stop();
 
+    // get the relative position of the playhead
+    double const getPositionRelative();
+
 private:
 
-    juce::AudioFormatManager formatManager;
+    juce::AudioFormatManager &formatManager;
 
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;

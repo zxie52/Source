@@ -10,7 +10,7 @@
 
 #include "DJApplication.h"
 
-DJApplication::DJApplication() {
+DJApplication::DJApplication(juce::AudioFormatManager& _formatManager) : formatManager(_formatManager) {
 
 }
 
@@ -20,8 +20,6 @@ DJApplication::~DJApplication() {
 
 //==============================================================================
 void DJApplication::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
-    formatManager.registerBasicFormats();
-
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     resampleSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     
@@ -71,6 +69,12 @@ void DJApplication::setPositionRelative(double pos) {
         double posInSecs = transportSource.getLengthInSeconds() * pos;
         setPosition(posInSecs);
     }
+}
+
+
+// get the relative position of the playhead
+double const DJApplication::getPositionRelative() {
+    return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();
 }
 
 void DJApplication::start() {

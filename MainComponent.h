@@ -38,10 +38,10 @@ private:
     juce::AudioFormatManager formatManager;
     juce::AudioThumbnailCache thumbCache{10};
 
-    DJApplication player1{};
+    DJApplication player1{formatManager};
     DeckGUI deckGUI1{&player1, formatManager, thumbCache};
 
-    DJApplication player2{};
+    DJApplication player2{formatManager};
     DeckGUI deckGUI2{&player2, formatManager, thumbCache};
 
     juce::MixerAudioSource mixerSource;

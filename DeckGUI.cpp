@@ -40,10 +40,14 @@ DeckGUI::DeckGUI(DJApplication* _player,
     volSlider.setRange(0.0, 1.0);
     speedSlider.setRange(0.0, 100.0);
     posSlider.setRange(0.0, 10.0);
+
+    startTimer(500);// in milliseconds
+
 }
 
 DeckGUI::~DeckGUI()
 {
+    stopTimer();
 }
 
 void DeckGUI::paint (juce::Graphics& g)
@@ -120,6 +124,11 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider)
     {
         player->setPositionRelative(slider->getValue());
     }
+}
+
+void DeckGUI::timerCallback() {
+    DBG("DeckGUI::timerCallback");
+    waveformDisplay.setPositionRelative(player->getPositionRelative());
 }
 
 bool DeckGUI::isInterestedInFileDrag(const juce::StringArray& files) {
