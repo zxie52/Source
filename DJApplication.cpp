@@ -14,7 +14,7 @@ DJApplication::DJApplication(juce::AudioFormatManager& _formatManager) : formatM
 
 }
 
-DJApplication::~DJApplication() {
+DJApplication::~DJApplication(){
 
 }
 
@@ -74,7 +74,14 @@ void DJApplication::setPositionRelative(double pos) {
 
 // get the relative position of the playhead
 double const DJApplication::getPositionRelative() {
-    return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();
+    if (transportSource.getLengthInSeconds() != 0) {
+        return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();
+    }
+    else {
+        DBG("DJApplication::getPositionRelative, Please load the file at the beginning!");
+    }
+
+    
 }
 
 void DJApplication::start() {

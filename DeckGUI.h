@@ -15,11 +15,12 @@
 #include "WaveformDisplay.h"
 
 //==============================================================================
-/*
-*/
+
+// extend the necessary classes for the deckGUI
 class DeckGUI  : public juce::Component,
                  public juce::Button::Listener,
                  public juce::Slider::Listener,
+                 public juce::LookAndFeel_V4,
                  public juce::FileDragAndDropTarget,
                  public juce::Timer
 {
@@ -42,6 +43,7 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
+    // implement the timer function 
     void timerCallback() override;
 
 private:
@@ -51,10 +53,12 @@ private:
     juce::TextButton stopButton{ "STOP" };
     juce::TextButton loadButton{ "LOAD" };
 
+    // three slider for the audio sample
     juce::Slider volSlider;
     juce::Slider speedSlider;
     juce::Slider posSlider;
 
+    // pointer for the player and also need to be called in the constructor function
     DJApplication* player;
 
     WaveformDisplay waveformDisplay;

@@ -12,7 +12,7 @@ MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (800, 600);
+    setSize (1280, 720);
 
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
@@ -27,9 +27,14 @@ MainComponent::MainComponent()
         setAudioChannels (0, 2);
     }
 
+    // make the GUI visible 
     addAndMakeVisible(deckGUI1);
     addAndMakeVisible(deckGUI2);
 
+    // make the playlist visible
+    addAndMakeVisible(playlist);
+
+    // register the formats before loading the music source: better to be done in the mainComponent module
     formatManager.registerBasicFormats();
 }
 
@@ -42,10 +47,12 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
+    // add player1 or player2 sources, and the mix them if both of them loaded
     player1.prepareToPlay(samplesPerBlockExpected, sampleRate);
     player2.prepareToPlay(samplesPerBlockExpected, sampleRate);
     mixerSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 
+    // set the original boolean as false for adding audio source
     mixerSource.addInputSource(&player1, false);
     mixerSource.addInputSource(&player2, false);
  }
@@ -78,7 +85,12 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    deckGUI1.setBounds(0, 0, getWidth() / 2, getHeight());
-    deckGUI2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
+
+    // Depending on how many players you want to add in the program, the division can be changed
+    deckGUI1.setBounds(0, 0, getWidth(), getHeight() * 2 / 5);
+    deckGUI2.setBounds(0, getHeight() * 2 / 5, getWidth(), getHeight() * 2 / 5);
+
+    // set the position for the playlist (below the two decks)
+    playlist.setBounds(0, getHeight() * 4 / 5, getWidth(), getHeight() / 5);
 }
 

@@ -19,16 +19,21 @@ DeckGUI::DeckGUI(DJApplication* _player,
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+
+    // make the button visible
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
     addAndMakeVisible(loadButton);
 
+    // make the slider visible 
     addAndMakeVisible(volSlider);
     addAndMakeVisible(speedSlider);
     addAndMakeVisible(posSlider);
 
+    // set the waveform visible on the right side of the GUI
     addAndMakeVisible(waveformDisplay);
 
+    // add event listeners to the buttons and sliders
     playButton.addListener(this);
     stopButton.addListener(this);
     loadButton.addListener(this);
@@ -37,16 +42,19 @@ DeckGUI::DeckGUI(DJApplication* _player,
     speedSlider.addListener(this);
     posSlider.addListener(this);
 
-    volSlider.setRange(0.0, 1.0);
-    speedSlider.setRange(0.0, 100.0);
-    posSlider.setRange(0.0, 10.0);
+    // set the range for sliders
+    volSlider.setRange(0, 100);
+    speedSlider.setRange(0.0, 10.0);
+    posSlider.setRange(0.0, 5.0);
 
+    // start the timer for the first 500 ms
     startTimer(500);// in milliseconds
 
 }
 
 DeckGUI::~DeckGUI()
 {
+    // stop the timer in the destructor function
     stopTimer();
 }
 
@@ -66,34 +74,50 @@ void DeckGUI::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (14.0f);
-    g.drawText ("DeckGUI", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
+    g.drawText ("Player", getLocalBounds(),
+                juce::Justification::left, true);   // draw some placeholder text
 }
 
 void DeckGUI::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
+
+    // set the bound for each section
+
     double rowH = getHeight() / 8;
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);
-    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
-    posSlider.setBounds(0, rowH * 4, getWidth(), rowH);
-    waveformDisplay.setBounds(0, rowH * 5, getWidth(), rowH * 2);
-    loadButton.setBounds(0, rowH * 7, getWidth(), rowH);
+
+    loadButton.setBounds(0, 0, getWidth() / 2, rowH);
+    playButton.setBounds(0, rowH, getWidth() / 2, rowH);
+    stopButton.setBounds(0, rowH * 2, getWidth() / 2, rowH);
+
+    volSlider.setSliderStyle(juce::Slider::Rotary);
+    volSlider.setBounds(0, rowH * 3, getWidth() / 6, rowH * 4);
+    volSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+
+    speedSlider.setSliderStyle(juce::Slider::Rotary);
+    speedSlider.setBounds(getWidth() / 6, rowH * 3, getWidth() / 6, rowH * 4);
+    speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+
+    posSlider.setSliderStyle(juce::Slider::Rotary);
+    posSlider.setBounds(getWidth() / 3, rowH * 3, getWidth() / 6, rowH * 4);
+    posSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 100, 25);
+
+    waveformDisplay.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
 void DeckGUI::buttonClicked(juce::Button* button)
 {
     if (button == &playButton)
     {
-        std::cout << "Play button was clicked " << std::endl;
+        DBG("The play button is clicked by the user");
+        //use the pointer to run the start function
         player->start();
     }
     if (button == &stopButton)
     {
-        std::cout << "Stop button was clicked " << std::endl;
+        DBG("The stop button is clicked by the user");
+        //use the pointer to run the stop function
         player->stop();
 
     }
@@ -135,9 +159,11 @@ bool DeckGUI::isInterestedInFileDrag(const juce::StringArray& files) {
     DBG("DeckGUI::isInterestedInFileDrag");
     return true;
 }
+
 void DeckGUI::filesDropped(const juce::StringArray& files, int x, int y) {
     DBG("DeckGUI::filesDropped");
     if (files.size() == 1) {
         player->loadURL(juce::URL(juce::File{files[0]}));
+        waveformDisplay.loadURL(juce::URL(juce::File{ files[0] }));
     }
 }
