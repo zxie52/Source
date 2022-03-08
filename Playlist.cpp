@@ -88,6 +88,7 @@ void Playlist::paintCell(juce::Graphics& g,
                          bool rowIsSelected) {
     if (columnId == 1) {
         g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+        //trackTitles[rowNumber];
     }
 }
 
@@ -95,7 +96,7 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
                                                    int 	columnId,
                                                    bool 	isRowSelected,
                                                    Component* existingComponentToUpdate) {
-    if (columnId == 5) {
+    if (columnId == 4) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no play button on the playlist, add the play button at the end of each row
             juce::TextButton* bin = new juce::TextButton{ "Play" };
@@ -117,18 +118,23 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
 // listener for the play button
 void Playlist::buttonClicked(juce::Button* button) {
     // convert the juce::string to the std::string
-    int id = std::stoi(button->getComponentID().toStdString());
-    player->loadURL(trackTitles[id]);
-
-    DBG("Playlist::buttonClicked" << trackTitles[id]);
-
+    juce::FileChooser chooser{ "What file do you want..." };
+    if (chooser.browseForFileToOpen()){
+        int id = std::stoi(button->getComponentID().toStdString());
+        player->loadURL(juce::URL{ trackFiles[id] });
+        player->start();
+        if (chooser.browseForMultipleFilesToOpen()){
+            setTracks(chooser.getResults());
+        }
+    }
 }
+
 
 void Playlist::setTracks(juce::Array<juce::File> trackFiles){
 
     for (int i = 0; i < trackFiles.size(); i++)
     {
-        trackTitles.add(trackFiles[i].getFileName());
+        trackTitles.push_back(trackFiles[i].getFileName());
     }
     tableComponent.updateContent();
 }

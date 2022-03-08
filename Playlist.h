@@ -56,16 +56,17 @@ public:
     void setTracks(juce::Array<juce::File> trackFiles);
 
     // create the array to store the track titles in the playlist
-    juce::Array <juce::File> trackTitles;
+    std::vector <std::string> trackTitles;
     juce::Array <juce::File> trackFiles;
+
+    //std::vector <std::string> juce::Array <juce::File>
+
 private:
 
     // create the table list box
     juce::TableListBox tableComponent;
 
     DJApplication* player;
-
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Playlist)
 };

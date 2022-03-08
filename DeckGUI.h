@@ -70,7 +70,5 @@ private:
     // waveformdisplay object, further for the WaveformDisplay.cpp
     WaveformDisplay waveformDisplay;
 
-    Playlist playlist;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };

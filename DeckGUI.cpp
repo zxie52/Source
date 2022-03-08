@@ -16,6 +16,7 @@ DeckGUI::DeckGUI(DJApplication* _player,
                  juce::AudioFormatManager& formatManagerToUse,
                  juce::AudioThumbnailCache& cacheToUse) : player(_player), 
                                                           waveformDisplay(formatManagerToUse, cacheToUse)
+
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -136,7 +137,6 @@ void DeckGUI::buttonClicked(juce::Button* button)
         if (chooser.browseForFileToOpen())
         {
             // load the music to the player cache and waveform cache
-            
             player->loadURL(juce::URL{ chooser.getResult() });
             waveformDisplay.loadURL(juce::URL{ chooser.getResult() });
         }

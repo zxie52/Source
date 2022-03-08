@@ -49,7 +49,7 @@ private:
     DJApplication player1{formatManager};
     DeckGUI deckGUI1{&player1, formatManager, thumbCache};
 
-    // create the 1st player and the deckGUI
+    // create the 2nd player and the deckGUI
     DJApplication player2{formatManager};
     DeckGUI deckGUI2{&player2, formatManager, thumbCache};
 
