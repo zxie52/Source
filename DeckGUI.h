@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "DJApplication.h"
 #include "WaveformDisplay.h"
+#include "Playlist.h"
 
 //==============================================================================
 
@@ -58,10 +59,18 @@ private:
     juce::Slider speedSlider;
     juce::Slider posSlider;
 
+    // Look for the three different sliders
+    juce::LookAndFeel_V4 volSliderLook;
+    juce::LookAndFeel_V4 speedSliderLook;
+    juce::LookAndFeel_V4 posSliderLook;
+
     // pointer for the player and also need to be called in the constructor function
     DJApplication* player;
 
+    // waveformdisplay object, further for the WaveformDisplay.cpp
     WaveformDisplay waveformDisplay;
+
+    Playlist playlist;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };

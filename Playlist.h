@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include <vector>
 #include <string>
+#include "DeckGUI.h"
 //==============================================================================
 /*
 */
@@ -51,13 +52,19 @@ public:
     // listener for the play button
     void buttonClicked(juce::Button* button) override;
 
+    // set the tracks for the added file
+    void setTracks(juce::Array<juce::File> trackFiles);
+
+    // create the array to store the track titles in the playlist
+    juce::Array < juce::File > trackTitles;
+    juce::Array < juce::File > trackFiles;
+
 private:
 
     // create the table list box
     juce::TableListBox tableComponent;
 
-    // create the vector to store the track titles in the playlist
-    std::vector<std::string> trackTitles;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Playlist)
 };

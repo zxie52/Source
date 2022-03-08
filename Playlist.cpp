@@ -17,9 +17,6 @@ Playlist::Playlist()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    // create the track titles
-    trackTitles.push_back("Track 1");
-    trackTitles.push_back("Track 2");
 
     // build up the columns for the playlist
     tableComponent.getHeader().addColumn("Track title", 0, 400);
@@ -89,7 +86,9 @@ void Playlist::paintCell(juce::Graphics& g,
                          int width,
                          int height,
                          bool rowIsSelected) {
-    g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centred, true);
+    if (columnId == 1) {
+        g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+    }
 }
 
 juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
@@ -119,7 +118,17 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
 void Playlist::buttonClicked(juce::Button* button) {
     // convert the juce::string to the std::string
     int id = std::stoi(button->getComponentID().toStdString());
+    player->loadURL(trackTitles[id]);
 
     DBG("Playlist::buttonClicked" << trackTitles[id]);
 
+}
+
+void Playlist::setTracks(juce::Array<juce::File> trackFiles){
+
+    for (int i = 0; i < trackFiles.size(); i++)
+    {
+        trackTitles.add(trackFiles[i].getFileName());
+    }
+    tableComponent.updateContent();
 }
