@@ -56,13 +56,14 @@ public:
     void setTracks(juce::Array<juce::File> trackFiles);
 
     // create the array to store the track titles in the playlist
-    juce::Array < juce::File > trackTitles;
-    juce::Array < juce::File > trackFiles;
-
+    juce::Array <juce::File> trackTitles;
+    juce::Array <juce::File> trackFiles;
 private:
 
     // create the table list box
     juce::TableListBox tableComponent;
+
+    DJApplication* player;
 
 
 
