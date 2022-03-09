@@ -15,7 +15,8 @@
 DeckGUI::DeckGUI(DJApplication* _player,
                  juce::AudioFormatManager& formatManagerToUse,
                  juce::AudioThumbnailCache& cacheToUse) : player(_player), 
-                                                          waveformDisplay(formatManagerToUse, cacheToUse)
+                                                          waveformDisplay(formatManagerToUse, cacheToUse),
+                                                          state(Stopped)
 
 {
     // In your constructor, you should add any child components, and
@@ -36,7 +37,13 @@ DeckGUI::DeckGUI(DJApplication* _player,
 
     // add event listeners to the buttons and sliders
     playButton.addListener(this);
+    playButton.setEnabled(false);
+    playButton.onClick = [this] {playButtonClicked(); };
+
     stopButton.addListener(this);
+    stopButton.setEnabled(false);
+    stopButton.onClick = [this] {stopButtonClicked(); };
+
     loadButton.addListener(this);
 
     volSlider.addListener(this);
@@ -55,6 +62,9 @@ DeckGUI::DeckGUI(DJApplication* _player,
 
     // start the timer for the first 500 ms
     startTimer(500);// in milliseconds
+
+    // allow the changing of listener
+    player->transportSource.addChangeListener(this);
 
 }
 
@@ -94,8 +104,14 @@ void DeckGUI::resized()
     double rowH = getHeight() / 8;
 
     loadButton.setBounds(0, 0, getWidth() / 2, rowH);
+    loadButton.setColour(juce::TextButton::buttonColourId, juce::Colours::blue);
+
     playButton.setBounds(0, rowH, getWidth() / 2, rowH);
+    playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::orange);
+
     stopButton.setBounds(0, rowH * 2, getWidth() / 2, rowH);
+    stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+
 
     volSlider.setSliderStyle(juce::Slider::Rotary);
     volSlider.setBounds(0, rowH * 3, getWidth() / 6, rowH * 4);
@@ -115,21 +131,71 @@ void DeckGUI::resized()
     waveformDisplay.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
+void DeckGUI::changeState(TransportState newState) {
+    if (state != newState) {
+        state = newState;
+
+        switch (state) {
+            case Stopped:
+                playButton.setButtonText("Play");
+                stopButton.setButtonText("Stop");
+                stopButton.setEnabled(false);
+                player->transportSource.setPosition(0.0);
+                break;
+            case Starting:
+                player->transportSource.start();
+                break;
+            case Playing:
+                playButton.setButtonText("Pause");
+                stopButton.setButtonText("Stop");
+                stopButton.setEnabled(true);
+                break;
+            case Pausing:
+                player->transportSource.stop();
+                break;
+            case Paused:
+                playButton.setButtonText("Resume");
+                stopButton.setButtonText("Return to Zero");
+                break;
+            case Stopping:
+                player->transportSource.stop();
+                break;
+        }
+    }
+}
+
+void DeckGUI::changeListenerCallback(juce::ChangeBroadcaster* source){
+    if (source == &player->transportSource) {
+        if (player->transportSource.isPlaying()) {
+            changeState(Playing);
+        }
+        if (state == Stopping || state == Playing) {
+            changeState(Stopped);
+        }
+        if (state == Pausing) {
+            changeState(Paused);
+        }
+    }
+}
+
 void DeckGUI::buttonClicked(juce::Button* button)
 {
-    if (button == &playButton)
-    {
-        DBG("The play button is clicked by the user");
-        //use the pointer to run the start function
-        player->start();
-    }
-    if (button == &stopButton)
-    {
-        DBG("The stop button is clicked by the user");
-        //use the pointer to run the stop function
-        player->stop();
+    //if (button == &playButton)
+    //{
+    //    DBG("The play button is clicked by the user");
+    //    //use the pointer to run the start function
+    //    playButtonClicked();
+    //    player->start();
+    //    stopButton.setEnabled(true);
+    //}
+    //if (button == &stopButton)
+    //{
+    //    DBG("The stop button is clicked by the user");
+    //    //use the pointer to run the stop function
+    //    stopButtonClicked();
+    //    player->stop();
 
-    }
+    //}
     if (button == &loadButton)
     {
         // load the music file 
@@ -139,8 +205,21 @@ void DeckGUI::buttonClicked(juce::Button* button)
             // load the music to the player cache and waveform cache
             player->loadURL(juce::URL{ chooser.getResult() });
             waveformDisplay.loadURL(juce::URL{ chooser.getResult() });
+
+            // set the playbutton enabled
+            playButton.setEnabled(true);
         }
     }
+}
+
+void DeckGUI::playButtonClicked() {
+    if (state == Stopped || state == Paused) changeState(Starting);
+    if (state == Playing) changeState(Pausing);
+}
+
+void DeckGUI::stopButtonClicked() {
+    if (state == Paused) changeState(Stopped);
+    else changeState(Stopping);
 }
 
 void DeckGUI::sliderValueChanged(juce::Slider* slider)

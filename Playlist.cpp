@@ -132,9 +132,9 @@ void Playlist::buttonClicked(juce::Button* button) {
 
 void Playlist::setTracks(juce::Array<juce::File> trackFiles){
 
-    for (int i = 0; i < trackFiles.size(); i++)
-    {
-        trackTitles.push_back(trackFiles[i].getFileName());
-    }
+    //for (int i = 0; i < trackFiles.size(); i++)
+    //{
+    //    trackTitles.add(trackFiles[i].getFileName());
+    //}
     tableComponent.updateContent();
 }

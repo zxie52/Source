@@ -17,13 +17,24 @@
 
 //==============================================================================
 
+// enum the state for different types of clicking on buttons
+enum TransportState {
+                     Stopped,
+                     Starting,
+                     Playing,
+                     Pausing,
+                     Paused,
+                     Stopping
+};
+
 // extend the necessary classes for the deckGUI
 class DeckGUI  : public juce::Component,
                  public juce::Button::Listener,
                  public juce::Slider::Listener,
                  public juce::LookAndFeel_V4,
                  public juce::FileDragAndDropTarget,
-                 public juce::Timer
+                 public juce::Timer,
+                 public juce::ChangeListener
 {
 public:
     DeckGUI(DJApplication* player,
@@ -47,6 +58,16 @@ public:
     // implement the timer function 
     void timerCallback() override;
 
+    // implement the change state function when user presses the buttons
+    void changeState(TransportState newState);
+
+    // change the listenercallback state
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+
+    // setup fucntions for play button or stop button to be clicked
+    void playButtonClicked();
+    void stopButtonClicked();
+
 private:
 
     // Your private member variables go here
@@ -69,6 +90,9 @@ private:
 
     // waveformdisplay object, further for the WaveformDisplay.cpp
     WaveformDisplay waveformDisplay;
+
+    // add the state for the player
+    TransportState state;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };

@@ -34,12 +34,15 @@ public:
 
     // get the relative position of the playhead
     double const getPositionRelative();
+    
+    juce::AudioFormatManager& formatManager;
+
+    // the transportSource is also needed in DeckGUI.h, I put it in public 
+    juce::AudioTransportSource transportSource;
+
 
 private:
-
-    juce::AudioFormatManager &formatManager;
-
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-    juce::AudioTransportSource transportSource;
     juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
+
 };
