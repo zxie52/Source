@@ -57,7 +57,10 @@ public:
     void setTracks(juce::Array<juce::File> trackFiles);
 
     // create the array to store the track titles in the playlist
-    std::vector <juce::String> trackTitles = {"Add Some Tracks"};
+    std::vector <juce::String> trackTitles;
+    std::vector <juce::String> trackPaths;
+    std::vector <juce::String> trackTypes;
+
     juce::Array <juce::File> trackFiles;
 
     // functions for extra buttons onClick
@@ -76,6 +79,8 @@ private:
 
     // create the table list box
     juce::TableListBox tableComponent;
+
+    juce::AudioFormatManager formatManager;
 
     DJApplication* player;
 

@@ -20,15 +20,17 @@ Playlist::Playlist()
 
     // build up the columns for the playlist
     // column to show the tile of the audio file
-    tableComponent.getHeader().addColumn("Track title", 0, 500);
+    tableComponent.getHeader().addColumn("Track title", 0, 300);
     // column to show the URL file location
-    tableComponent.getHeader().addColumn("URL", 1, 300);
+    tableComponent.getHeader().addColumn("URL", 1, 400);
     // column to show the length of the audio file
     tableComponent.getHeader().addColumn("length", 2, 120);
+    // column to show the length of the audio file
+    tableComponent.getHeader().addColumn("type", 3, 100);
     // button to load the audio file to the upper deck
-    tableComponent.getHeader().addColumn("Load to the Up Deck", 3, 180);
+    tableComponent.getHeader().addColumn("Load to the Up Deck", 4, 180);
     // button to load the audio file to the lower deck
-    tableComponent.getHeader().addColumn("Load to the down Deck", 4, 180);
+    tableComponent.getHeader().addColumn("Load to the down Deck", 5, 180);
 
     // set the model to build the table for the playlist
     tableComponent.setModel(this);
@@ -110,13 +112,19 @@ void Playlist::paintCell(juce::Graphics& g,
     if (columnId == 0) {
         g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
+    if (columnId == 1) {
+        g.drawText(trackPaths[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+    }
+    if (columnId == 3) {
+        g.drawText(trackTypes[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+    }
 }
 
 juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
                                                    int 	columnId,
                                                    bool 	isRowSelected,
                                                    Component* existingComponentToUpdate) {
-    if (columnId == 3) {
+    if (columnId == 4) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no load button on the playlist, add the load button at the end of each row
             juce::TextButton* upbtn = new juce::TextButton{ "Load to Up Deck" };
@@ -131,7 +139,7 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
         }
     }
     
-    if (columnId == 4) {
+    if (columnId == 5) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no load button on the playlist, add the load button at the end of each row
             juce::TextButton *downbtn = new juce::TextButton{ "Load to Down Deck" };
@@ -188,6 +196,8 @@ void Playlist::setTracks(juce::Array<juce::File> trackFiles){
     for (int i = 0; i < trackFiles.size(); i++)
     {
         trackTitles.push_back(trackFiles[i].getFileName());
+        trackPaths.push_back(trackFiles[i].getFullPathName());
+        trackTypes.push_back(trackFiles[i].getFileExtension());
     }
     tableComponent.updateContent();
 }
