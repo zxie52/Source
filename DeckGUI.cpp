@@ -16,7 +16,11 @@ DeckGUI::DeckGUI(DJApplication* _player,
                  juce::AudioFormatManager& formatManagerToUse,
                  juce::AudioThumbnailCache& cacheToUse) : player(_player), 
                                                           waveformDisplay(formatManagerToUse, cacheToUse),
+<<<<<<< HEAD
                                                           state(TransportState::Stopped)
+=======
+                                                          state(Stopped)
+>>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 
 {
     // In your constructor, you should add any child components, and
@@ -36,6 +40,7 @@ DeckGUI::DeckGUI(DJApplication* _player,
     addAndMakeVisible(waveformDisplay);
 
     // add event listeners to the buttons and sliders
+<<<<<<< HEAD
     //playButton.addListener(this);
     playButton.setEnabled(false);
     playButton.onClick = [this] {playButtonClicked(); };
@@ -46,6 +51,17 @@ DeckGUI::DeckGUI(DJApplication* _player,
 
     //loadButton.addListener(this);
     loadButton.onClick = [this] {loadButtonClicked(); };
+=======
+    playButton.addListener(this);
+    playButton.setEnabled(false);
+    playButton.onClick = [this] {playButtonClicked(); };
+
+    stopButton.addListener(this);
+    stopButton.setEnabled(false);
+    stopButton.onClick = [this] {stopButtonClicked(); };
+
+    loadButton.addListener(this);
+>>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 
     volSlider.addListener(this);
     speedSlider.addListener(this);
@@ -65,7 +81,11 @@ DeckGUI::DeckGUI(DJApplication* _player,
     startTimer(500);// in milliseconds
 
     // allow the changing of listener
+<<<<<<< HEAD
     //player->transportSource.addChangeListener(this);
+=======
+    player->transportSource.addChangeListener(this);
+>>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 
 }
 
@@ -132,6 +152,7 @@ void DeckGUI::resized()
     waveformDisplay.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
+<<<<<<< HEAD
 //void DeckGUI::changeListenerCallback(juce::ChangeBroadcaster* source) {
 //    if (source == &player) {
 //        if (player->isPlaying()) {
@@ -185,11 +206,91 @@ void DeckGUI::changeState(TransportState newState) {
                 player->stop();
                 changeState(TransportState::Stopped);
                 break;
+=======
+void DeckGUI::changeState(TransportState newState) {
+    if (state != newState) {
+        state = newState;
+
+        switch (state) {
+            case Stopped:
+                playButton.setButtonText("Play");
+                stopButton.setButtonText("Stop");
+                stopButton.setEnabled(false);
+                player->transportSource.setPosition(0.0);
+                break;
+            case Starting:
+                player->transportSource.start();
+                break;
+            case Playing:
+                playButton.setButtonText("Pause");
+                stopButton.setButtonText("Stop");
+                stopButton.setEnabled(true);
+                break;
+            case Pausing:
+                player->transportSource.stop();
+                break;
+            case Paused:
+                playButton.setButtonText("Resume");
+                stopButton.setButtonText("Return to Zero");
+                break;
+            case Stopping:
+                player->transportSource.stop();
+                break;
+        }
+    }
+}
+
+void DeckGUI::changeListenerCallback(juce::ChangeBroadcaster* source){
+    if (source == &player->transportSource) {
+        if (player->transportSource.isPlaying()) {
+            changeState(Playing);
+        }
+        if (state == Stopping || state == Playing) {
+            changeState(Stopped);
+        }
+        if (state == Pausing) {
+            changeState(Paused);
+        }
+    }
+}
+
+void DeckGUI::buttonClicked(juce::Button* button)
+{
+    //if (button == &playButton)
+    //{
+    //    DBG("The play button is clicked by the user");
+    //    //use the pointer to run the start function
+    //    playButtonClicked();
+    //    player->start();
+    //    stopButton.setEnabled(true);
+    //}
+    //if (button == &stopButton)
+    //{
+    //    DBG("The stop button is clicked by the user");
+    //    //use the pointer to run the stop function
+    //    stopButtonClicked();
+    //    player->stop();
+
+    //}
+    if (button == &loadButton)
+    {
+        // load the music file 
+        juce::FileChooser chooser{ "What file do you want..." };
+        if (chooser.browseForFileToOpen())
+        {
+            // load the music to the player cache and waveform cache
+            player->loadURL(juce::URL{ chooser.getResult() });
+            waveformDisplay.loadURL(juce::URL{ chooser.getResult() });
+
+            // set the playbutton enabled
+            playButton.setEnabled(true);
+>>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
         }
     }
 }
 
 void DeckGUI::playButtonClicked() {
+<<<<<<< HEAD
     if ((state == TransportState::Stopped) || (state == TransportState::Paused)) {
         changeState(TransportState::Starting);
     }
@@ -213,6 +314,15 @@ void DeckGUI::loadButtonClicked() {
         // set the playbutton enabled
         playButton.setEnabled(true);
     }
+=======
+    if (state == Stopped || state == Paused) changeState(Starting);
+    if (state == Playing) changeState(Pausing);
+}
+
+void DeckGUI::stopButtonClicked() {
+    if (state == Paused) changeState(Stopped);
+    else changeState(Stopping);
+>>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 }
 
 void DeckGUI::sliderValueChanged(juce::Slider* slider)
