@@ -35,11 +35,12 @@ public:
     // get the relative position of the playhead
     double const getPositionRelative();
 
+
 private:
+    juce::AudioFormatManager& formatManager;
 
-    juce::AudioFormatManager &formatManager;
-
-    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;
+    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
+
 };

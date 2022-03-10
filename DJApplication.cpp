@@ -71,7 +71,6 @@ void DJApplication::setPositionRelative(double pos) {
     }
 }
 
-
 // get the relative position of the playhead
 double const DJApplication::getPositionRelative() {
     if (transportSource.getLengthInSeconds() != 0) {
@@ -80,8 +79,6 @@ double const DJApplication::getPositionRelative() {
     else {
         DBG("DJApplication::getPositionRelative, Please load the file at the beginning!");
     }
-
-    
 }
 
 void DJApplication::start() {
