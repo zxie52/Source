@@ -57,12 +57,22 @@ public:
     void setTracks(juce::Array<juce::File> trackFiles);
 
     // create the array to store the track titles in the playlist
-    std::vector <juce::String> trackTitles = {"SomeTracks"};
+    std::vector <juce::String> trackTitles = {"Add Some Tracks"};
     juce::Array <juce::File> trackFiles;
 
-    //std::vector <std::string> //juce::Array <juce::File>;
+    // functions for extra buttons onClick
+    void importButtonClicked();
+    void exportButtonClicked();
+    void searchButtonClicked();
 
 private:
+
+    juce::TextButton searchButton{ "Search through the Playlist" };
+    juce::TextButton importButton{ "Import Playlist" };
+    juce::TextButton exportButton{ "Export Playlist" };
+
+    juce::TextButton* upbtn;
+    juce::TextButton* downbtn;
 
     // create the table list box
     juce::TableListBox tableComponent;

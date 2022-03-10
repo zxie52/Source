@@ -20,21 +20,29 @@ Playlist::Playlist()
 
     // build up the columns for the playlist
     // column to show the tile of the audio file
-    tableComponent.getHeader().addColumn("Track title", 0, 600);
+    tableComponent.getHeader().addColumn("Track title", 0, 500);
     // column to show the URL file location
     tableComponent.getHeader().addColumn("URL", 1, 300);
     // column to show the length of the audio file
-    tableComponent.getHeader().addColumn("length", 2, 180);
+    tableComponent.getHeader().addColumn("length", 2, 120);
     // button to load the audio file to the upper deck
-    tableComponent.getHeader().addColumn("", 3, 100);
+    tableComponent.getHeader().addColumn("Load to the Up Deck", 3, 180);
     // button to load the audio file to the lower deck
-    tableComponent.getHeader().addColumn("", 4, 100);
+    tableComponent.getHeader().addColumn("Load to the down Deck", 4, 180);
 
     // set the model to build the table for the playlist
     tableComponent.setModel(this);
 
     // make the table component visible in the constructor function
+    addAndMakeVisible(searchButton);
+    addAndMakeVisible(importButton);
+    addAndMakeVisible(exportButton);
     addAndMakeVisible(tableComponent);
+
+    // add listeners to extra buttons
+    importButton.onClick = [this] {importButtonClicked(); };
+    exportButton.onClick = [this] {exportButtonClicked(); };
+    searchButton.onClick = [this] {searchButtonClicked(); };
 }
 
 Playlist::~Playlist()
@@ -65,7 +73,15 @@ void Playlist::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-    tableComponent.setBounds(0, 0, getWidth(), getHeight());
+
+    double rowH = getHeight() / 8;
+    double rowL = getWidth() / 8;
+
+    searchButton.setBounds(0, 0, rowL * 2, rowH);
+    importButton.setBounds(rowL*6, 0, rowL, rowH);
+    exportButton.setBounds(rowL * 7, 0, rowL, rowH);
+
+    tableComponent.setBounds(0, rowH, getWidth(), rowH*7);
 }
 
 int Playlist::getNumRows() {
@@ -102,19 +118,33 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
                                                    Component* existingComponentToUpdate) {
     if (columnId == 3) {
         if (existingComponentToUpdate == nullptr) {
-            // if there is no play button on the playlist, add the play button at the end of each row
-            juce::TextButton* bin = new juce::TextButton{ "Play" };
+            // if there is no load button on the playlist, add the load button at the end of each row
+            juce::TextButton* upbtn = new juce::TextButton{ "Load to Up Deck" };
 
             // transform the int rowNumber to string and the get the component's ID
             juce::String id{ std::to_string(rowNumber) };
-            bin->setComponentID(id);
+            upbtn->setComponentID(id);
 
             // add the listener to the button
-            bin->addListener(this);
-            existingComponentToUpdate = bin;
+            upbtn->addListener(this);
+            existingComponentToUpdate = upbtn;
         }
     }
     
+    if (columnId == 4) {
+        if (existingComponentToUpdate == nullptr) {
+            // if there is no load button on the playlist, add the load button at the end of each row
+            juce::TextButton *downbtn = new juce::TextButton{ "Load to Down Deck" };
+
+            // transform the int rowNumber to string and the get the component's ID
+            juce::String id{ std::to_string(rowNumber) };
+            downbtn->setComponentID(id);
+
+            // add the listener to the button
+            downbtn->addListener(this);
+            existingComponentToUpdate = downbtn;
+        }
+    }
     // return the stored components
     return existingComponentToUpdate;
 }
@@ -122,15 +152,34 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
 // listener for the play button
 void Playlist::buttonClicked(juce::Button* button) {
     // convert the juce::string to the std::string
-    juce::FileChooser chooser{ "What file do you want..." };
-    if (chooser.browseForFileToOpen()){
-        int id = std::stoi(button->getComponentID().toStdString());
-        player->loadURL(juce::URL{ trackFiles[id] });
-        player->start();
-        if (chooser.browseForMultipleFilesToOpen()){
-            setTracks(chooser.getResults());
+    if (button == downbtn) {
+        juce::FileChooser chooser{ "What file do you want..." };
+        if (chooser.browseForFileToOpen()) {
+            int id = std::stoi(button->getComponentID().toStdString());
+            //player->loadURL(juce::URL{ trackFiles[id] });
+            //waveformDisplay.loadURL(juce::URL{ trackFiles[id] });
         }
+
+
     }
+    else if (button == upbtn) {
+
+    }
+
+}
+
+void Playlist::importButtonClicked() {
+    juce::FileChooser chooser{ "What file do you want..." };
+
+    if (chooser.browseForMultipleFilesToOpen()) {
+        setTracks(chooser.getResults());
+    }
+}
+void Playlist::exportButtonClicked() {
+
+}
+void Playlist::searchButtonClicked() {
+
 }
 
 
