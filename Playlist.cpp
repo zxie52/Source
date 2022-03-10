@@ -44,7 +44,6 @@ Playlist::Playlist()
     // add listeners to extra buttons
     importButton.onClick = [this] {importButtonClicked(); };
     exportButton.onClick = [this] {exportButtonClicked(); };
-    searchButton.onClick = [this] {searchButtonClicked(); };
 }
 
 Playlist::~Playlist()
@@ -84,6 +83,12 @@ void Playlist::resized()
     exportButton.setBounds(rowL * 7, 0, rowL, rowH);
 
     tableComponent.setBounds(0, rowH, getWidth(), rowH*7);
+
+    searchButton.setEditable(true);
+    searchButton.setText("Search through the Playlist", juce::dontSendNotification);
+    searchButton.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
+    searchButton.setJustificationType(juce::Justification::centred);
+
 }
 
 int Playlist::getNumRows() {
@@ -186,18 +191,24 @@ void Playlist::importButtonClicked() {
 void Playlist::exportButtonClicked() {
 
 }
-void Playlist::searchButtonClicked() {
 
-}
 
 
 void Playlist::setTracks(juce::Array<juce::File> trackFiles){
 
-    for (int i = 0; i < trackFiles.size(); i++)
-    {
-        trackTitles.push_back(trackFiles[i].getFileName());
-        trackPaths.push_back(trackFiles[i].getFullPathName());
-        trackTypes.push_back(trackFiles[i].getFileExtension());
+    if (searchButton.getText() == "Search through the Playlist") {
+        for (int i = 0; i < trackFiles.size(); i++) {
+            trackTitles.push_back(trackFiles[i].getFileName());
+            trackPaths.push_back(trackFiles[i].getFullPathName());
+            trackTypes.push_back(trackFiles[i].getFileExtension());
+        }
     }
+    else {
+        DBG("Need to filter the trackTitles");
+        // so far. still not sure the searching algorithms. 
+        // for instance, how can I type 'r' and get all titles with 'r' as the start?
+        // is the searching function embedded in the juce gui template?
+    }
+
     tableComponent.updateContent();
 }

@@ -66,11 +66,11 @@ public:
     // functions for extra buttons onClick
     void importButtonClicked();
     void exportButtonClicked();
-    void searchButtonClicked();
 
 private:
 
-    juce::TextButton searchButton{ "Search through the Playlist" };
+    juce::Label searchButton;
+
     juce::TextButton importButton{ "Import Playlist" };
     juce::TextButton exportButton{ "Export Playlist" };
 
