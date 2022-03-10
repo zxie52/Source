@@ -186,7 +186,7 @@ void DeckGUI::stopButtonClicked() {
 
 void DeckGUI::loadButtonClicked() {
     juce::FileChooser chooser("Select the audio file to play ...",
-        juce::File{});
+                              juce::File{});
     if (chooser.browseForFileToOpen())
     {
         // load the music to the player cache and waveform cache

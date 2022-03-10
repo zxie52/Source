@@ -19,10 +19,15 @@ Playlist::Playlist()
 
 
     // build up the columns for the playlist
-    tableComponent.getHeader().addColumn("Track title", 0, 400);
-    tableComponent.getHeader().addColumn("artist", 1, 300);
-    tableComponent.getHeader().addColumn("album", 2, 300);
-    tableComponent.getHeader().addColumn("length", 3, 180);
+    // column to show the tile of the audio file
+    tableComponent.getHeader().addColumn("Track title", 0, 600);
+    // column to show the URL file location
+    tableComponent.getHeader().addColumn("URL", 1, 300);
+    // column to show the length of the audio file
+    tableComponent.getHeader().addColumn("length", 2, 180);
+    // button to load the audio file to the upper deck
+    tableComponent.getHeader().addColumn("", 3, 100);
+    // button to load the audio file to the lower deck
     tableComponent.getHeader().addColumn("", 4, 100);
 
     // set the model to build the table for the playlist
@@ -86,9 +91,8 @@ void Playlist::paintCell(juce::Graphics& g,
                          int width,
                          int height,
                          bool rowIsSelected) {
-    if (columnId == 1) {
+    if (columnId == 0) {
         g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
-        //trackTitles[rowNumber];
     }
 }
 
@@ -96,7 +100,7 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
                                                    int 	columnId,
                                                    bool 	isRowSelected,
                                                    Component* existingComponentToUpdate) {
-    if (columnId == 4) {
+    if (columnId == 3) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no play button on the playlist, add the play button at the end of each row
             juce::TextButton* bin = new juce::TextButton{ "Play" };
@@ -132,9 +136,9 @@ void Playlist::buttonClicked(juce::Button* button) {
 
 void Playlist::setTracks(juce::Array<juce::File> trackFiles){
 
-    //for (int i = 0; i < trackFiles.size(); i++)
-    //{
-    //    trackTitles.add(trackFiles[i].getFileName());
-    //}
+    for (int i = 0; i < trackFiles.size(); i++)
+    {
+        trackTitles.push_back(trackFiles[i].getFileName());
+    }
     tableComponent.updateContent();
 }

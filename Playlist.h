@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include "DeckGUI.h"
+
 //==============================================================================
 /*
 */
@@ -56,10 +57,10 @@ public:
     void setTracks(juce::Array<juce::File> trackFiles);
 
     // create the array to store the track titles in the playlist
-    std::vector <std::string> trackTitles;
+    std::vector <juce::String> trackTitles = {"SomeTracks"};
     juce::Array <juce::File> trackFiles;
 
-    //std::vector <std::string> juce::Array <juce::File>
+    //std::vector <std::string> //juce::Array <juce::File>;
 
 private:
 
