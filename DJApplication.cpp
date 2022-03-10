@@ -1,10 +1,8 @@
 /*
   ==============================================================================
-
     DJApplication.cpp
     Created: 2 Mar 2022 1:24:39pm
     Author:  13z79
-
   ==============================================================================
 */
 
@@ -14,7 +12,7 @@ DJApplication::DJApplication(juce::AudioFormatManager& _formatManager) : formatM
 
 }
 
-DJApplication::~DJApplication(){
+DJApplication::~DJApplication() {
 
 }
 
@@ -22,7 +20,7 @@ DJApplication::~DJApplication(){
 void DJApplication::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     resampleSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
-    
+
 }
 void DJApplication::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) {
     resampleSource.getNextAudioBlock(bufferToFill);

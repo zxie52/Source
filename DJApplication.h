@@ -1,21 +1,19 @@
 /*
   ==============================================================================
-
     DJApplication.h
     Created: 2 Mar 2022 1:24:39pm
     Author:  13z79
-
   ==============================================================================
 */
 
 #pragma once
 #include <JuceHeader.h>
 
-class DJApplication : public juce::AudioSource{
-    
+class DJApplication : public juce::AudioSource {
+
 public:
     //==============================================================================
-    DJApplication(juce::AudioFormatManager &_formatManager);
+    DJApplication(juce::AudioFormatManager& _formatManager);
     ~DJApplication();
 
     //==============================================================================
@@ -34,21 +32,11 @@ public:
 
     // get the relative position of the playhead
     double const getPositionRelative();
-    
-    juce::AudioFormatManager& formatManager;
-
-    // the transportSource is also needed in DeckGUI.h, I put it in public 
-    juce::AudioTransportSource transportSource;
-
-
 
 private:
-<<<<<<< HEAD
-    juce::AudioFormatManager& formatManager;
+    juce::AudioFormatManager & formatManager;
 
     juce::AudioTransportSource transportSource;
-=======
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
 

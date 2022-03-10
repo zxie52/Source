@@ -1,10 +1,8 @@
 /*
   ==============================================================================
-
     DeckGUI.cpp
     Created: 2 Mar 2022 3:14:33pm
     Author:  13z79
-
   ==============================================================================
 */
 
@@ -14,13 +12,9 @@
 //==============================================================================
 DeckGUI::DeckGUI(DJApplication* _player,
                  juce::AudioFormatManager& formatManagerToUse,
-                 juce::AudioThumbnailCache& cacheToUse) : player(_player), 
-                                                          waveformDisplay(formatManagerToUse, cacheToUse),
-<<<<<<< HEAD
-                                                          state(TransportState::Stopped)
-=======
-                                                          state(Stopped)
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
+                 juce::AudioThumbnailCache& cacheToUse) : player(_player),
+                 waveformDisplay(formatManagerToUse, cacheToUse),
+                 state(TransportState::Stopped)
 
 {
     // In your constructor, you should add any child components, and
@@ -40,7 +34,6 @@ DeckGUI::DeckGUI(DJApplication* _player,
     addAndMakeVisible(waveformDisplay);
 
     // add event listeners to the buttons and sliders
-<<<<<<< HEAD
     //playButton.addListener(this);
     playButton.setEnabled(false);
     playButton.onClick = [this] {playButtonClicked(); };
@@ -51,17 +44,6 @@ DeckGUI::DeckGUI(DJApplication* _player,
 
     //loadButton.addListener(this);
     loadButton.onClick = [this] {loadButtonClicked(); };
-=======
-    playButton.addListener(this);
-    playButton.setEnabled(false);
-    playButton.onClick = [this] {playButtonClicked(); };
-
-    stopButton.addListener(this);
-    stopButton.setEnabled(false);
-    stopButton.onClick = [this] {stopButtonClicked(); };
-
-    loadButton.addListener(this);
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 
     volSlider.addListener(this);
     speedSlider.addListener(this);
@@ -81,11 +63,7 @@ DeckGUI::DeckGUI(DJApplication* _player,
     startTimer(500);// in milliseconds
 
     // allow the changing of listener
-<<<<<<< HEAD
     //player->transportSource.addChangeListener(this);
-=======
-    player->transportSource.addChangeListener(this);
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 
 }
 
@@ -95,24 +73,23 @@ DeckGUI::~DeckGUI()
     stopTimer();
 }
 
-void DeckGUI::paint (juce::Graphics& g)
+void DeckGUI::paint(juce::Graphics& g)
 {
     /* This demo code just fills the component's background and
        draws some placeholder text to get you started.
-
        You should replace everything in this method with your own
        drawing code..
     */
 
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));   // clear the background
 
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    g.setColour(juce::Colours::grey);
+    g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour (juce::Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("Player", getLocalBounds(),
-                juce::Justification::left, true);   // draw some placeholder text
+    g.setColour(juce::Colours::white);
+    g.setFont(14.0f);
+    g.drawText("Player", getLocalBounds(),
+        juce::Justification::left, true);   // draw some placeholder text
 }
 
 void DeckGUI::resized()
@@ -152,145 +129,50 @@ void DeckGUI::resized()
     waveformDisplay.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight());
 }
 
-<<<<<<< HEAD
-//void DeckGUI::changeListenerCallback(juce::ChangeBroadcaster* source) {
-//    if (source == &player) {
-//        if (player->isPlaying()) {
-//            changeState(TransportState::Playing);
-//        }
-//        if (state == TransportState::Stopping || state == TransportState::Playing) {
-//            changeState(TransportState::Stopped);
-//        }
-//        if (state == TransportState::Pausing) {
-//            changeState(TransportState::Paused);
-//        }
-//    }
-//}
-
 void DeckGUI::changeState(TransportState newState) {
     if (state != newState) {
         state = newState;
 
         switch (state) {
-            case TransportState::Stopped:
-                playButton.setButtonText("PLAY");
-                stopButton.setButtonText("STOP");
-                playButton.setEnabled(false);
-                stopButton.setEnabled(false);
-                loadButton.setEnabled(true);
-                player->setPosition(0.0);
-                break;
-            case TransportState::Starting:
-                player->start();
-                changeState(TransportState::Playing);
-                break;
-            case TransportState::Playing:
-                playButton.setButtonText("PAUSE");
-                stopButton.setButtonText("STOP");
-                playButton.setEnabled(true);
-                stopButton.setEnabled(true);
-                loadButton.setEnabled(false);
-                break;
-            case TransportState::Pausing:
-                player->stop();
-                changeState(TransportState::Paused);
-                break;
-            case TransportState::Paused:
-                playButton.setButtonText("RESUME");
-                stopButton.setButtonText("RETURN TO ZERO");
-                playButton.setEnabled(true);
-                stopButton.setEnabled(true);
-                loadButton.setEnabled(false);
-                break;
-            case TransportState::Stopping:
-                player->stop();
-                changeState(TransportState::Stopped);
-                break;
-=======
-void DeckGUI::changeState(TransportState newState) {
-    if (state != newState) {
-        state = newState;
-
-        switch (state) {
-            case Stopped:
-                playButton.setButtonText("Play");
-                stopButton.setButtonText("Stop");
-                stopButton.setEnabled(false);
-                player->transportSource.setPosition(0.0);
-                break;
-            case Starting:
-                player->transportSource.start();
-                break;
-            case Playing:
-                playButton.setButtonText("Pause");
-                stopButton.setButtonText("Stop");
-                stopButton.setEnabled(true);
-                break;
-            case Pausing:
-                player->transportSource.stop();
-                break;
-            case Paused:
-                playButton.setButtonText("Resume");
-                stopButton.setButtonText("Return to Zero");
-                break;
-            case Stopping:
-                player->transportSource.stop();
-                break;
-        }
-    }
-}
-
-void DeckGUI::changeListenerCallback(juce::ChangeBroadcaster* source){
-    if (source == &player->transportSource) {
-        if (player->transportSource.isPlaying()) {
-            changeState(Playing);
-        }
-        if (state == Stopping || state == Playing) {
-            changeState(Stopped);
-        }
-        if (state == Pausing) {
-            changeState(Paused);
-        }
-    }
-}
-
-void DeckGUI::buttonClicked(juce::Button* button)
-{
-    //if (button == &playButton)
-    //{
-    //    DBG("The play button is clicked by the user");
-    //    //use the pointer to run the start function
-    //    playButtonClicked();
-    //    player->start();
-    //    stopButton.setEnabled(true);
-    //}
-    //if (button == &stopButton)
-    //{
-    //    DBG("The stop button is clicked by the user");
-    //    //use the pointer to run the stop function
-    //    stopButtonClicked();
-    //    player->stop();
-
-    //}
-    if (button == &loadButton)
-    {
-        // load the music file 
-        juce::FileChooser chooser{ "What file do you want..." };
-        if (chooser.browseForFileToOpen())
-        {
-            // load the music to the player cache and waveform cache
-            player->loadURL(juce::URL{ chooser.getResult() });
-            waveformDisplay.loadURL(juce::URL{ chooser.getResult() });
-
-            // set the playbutton enabled
+        case TransportState::Stopped:
+            playButton.setButtonText("PLAY");
+            stopButton.setButtonText("STOP");
+            playButton.setEnabled(false);
+            stopButton.setEnabled(false);
+            loadButton.setEnabled(true);
+            player->setPosition(0.0);
+            break;
+        case TransportState::Starting:
+            player->start();
+            changeState(TransportState::Playing);
+            break;
+        case TransportState::Playing:
+            playButton.setButtonText("PAUSE");
+            stopButton.setButtonText("STOP");
             playButton.setEnabled(true);
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
+            stopButton.setEnabled(true);
+            loadButton.setEnabled(false);
+            break;
+        case TransportState::Pausing:
+            player->stop();
+            changeState(TransportState::Paused);
+            break;
+        case TransportState::Paused:
+            playButton.setButtonText("RESUME");
+            stopButton.setButtonText("RETURN TO ZERO");
+            playButton.setEnabled(true);
+            stopButton.setEnabled(true);
+            loadButton.setEnabled(false);
+            break;
+        case TransportState::Stopping:
+            player->stop();
+            changeState(TransportState::Stopped);
+            break;
         }
     }
 }
 
 void DeckGUI::playButtonClicked() {
-<<<<<<< HEAD
     if ((state == TransportState::Stopped) || (state == TransportState::Paused)) {
         changeState(TransportState::Starting);
     }
@@ -303,8 +185,8 @@ void DeckGUI::stopButtonClicked() {
 }
 
 void DeckGUI::loadButtonClicked() {
-    juce::FileChooser chooser ( "Select the audio file to play ...",
-                                juce::File{});
+    juce::FileChooser chooser("Select the audio file to play ...",
+        juce::File{});
     if (chooser.browseForFileToOpen())
     {
         // load the music to the player cache and waveform cache
@@ -314,15 +196,6 @@ void DeckGUI::loadButtonClicked() {
         // set the playbutton enabled
         playButton.setEnabled(true);
     }
-=======
-    if (state == Stopped || state == Paused) changeState(Starting);
-    if (state == Playing) changeState(Pausing);
-}
-
-void DeckGUI::stopButtonClicked() {
-    if (state == Paused) changeState(Stopped);
-    else changeState(Stopping);
->>>>>>> 96e8898fbc77a0c893771a075642ca4dfbd4ecec
 }
 
 void DeckGUI::sliderValueChanged(juce::Slider* slider)
@@ -362,7 +235,7 @@ void DeckGUI::filesDropped(const juce::StringArray& files, int x, int y) {
     DBG("DeckGUI::filesDropped");
     if (files.size() == 1) {
         // load the file and waveform
-        player->loadURL(juce::URL(juce::File{files[0]}));
+        player->loadURL(juce::URL(juce::File{ files[0] }));
         waveformDisplay.loadURL(juce::URL(juce::File{ files[0] }));
     }
 }

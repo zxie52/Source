@@ -1,10 +1,8 @@
 /*
   ==============================================================================
-
     DeckGUI.h
     Created: 2 Mar 2022 3:14:33pm
     Author:  13z79
-
   ==============================================================================
 */
 
@@ -28,21 +26,21 @@ enum class TransportState {
 };
 
 // extend the necessary classes for the deckGUI
-class DeckGUI  : public juce::Component,
-                 public juce::Slider::Listener,
-                 public juce::LookAndFeel_V4,
-                 public juce::FileDragAndDropTarget,
-                 public juce::Timer
+class DeckGUI : public juce::Component,
+                public juce::Slider::Listener,
+                public juce::LookAndFeel_V4,
+                public juce::FileDragAndDropTarget,
+                public juce::Timer
 {
 public:
     DeckGUI(DJApplication* player,
-            juce::AudioFormatManager &formatManagerToUse,
-            juce::AudioThumbnailCache &cacheToUse);
+            juce::AudioFormatManager& formatManagerToUse,
+            juce::AudioThumbnailCache& cacheToUse);
     ~DeckGUI() override;
 
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics&) override;
     void resized() override;
-    
+
 
     /** implement Slider::Listener */
     void sliderValueChanged(juce::Slider* slider) override;
@@ -88,5 +86,5 @@ private:
     // add the state for the player
     TransportState state;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DeckGUI)
 };
