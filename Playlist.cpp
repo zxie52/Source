@@ -76,6 +76,7 @@ void Playlist::resized()
     // components that your component contains..
 
     double rowH = getHeight() / 8;
+
     double rowL = getWidth() / 8;
 
     searchButton.setBounds(0, 0, rowL * 2, rowH);

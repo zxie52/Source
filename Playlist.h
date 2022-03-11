@@ -80,9 +80,8 @@ private:
     // create the table list box
     juce::TableListBox tableComponent;
 
-    juce::AudioFormatManager formatManager;
-
-    DJApplication* player;
+    // have the transportSource to seek the duration of th track in the audio library
+    juce::AudioTransportSource transportSource;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Playlist)
 };
