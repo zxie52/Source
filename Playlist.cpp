@@ -10,9 +10,10 @@
 
 #include <JuceHeader.h>
 #include "Playlist.h"
+#include <iostream>
 
 //==============================================================================
-Playlist::Playlist()
+Playlist::Playlist(juce::AudioFormatManager& _formatManager):formatManager(_formatManager)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -20,17 +21,17 @@ Playlist::Playlist()
 
     // build up the columns for the playlist
     // column to show the tile of the audio file
-    tableComponent.getHeader().addColumn("Track title", 0, 300);
+    tableComponent.getHeader().addColumn("Track title", 1, 300);
     // column to show the URL file location
-    tableComponent.getHeader().addColumn("URL", 1, 400);
+    tableComponent.getHeader().addColumn("URL", 2, 400);
     // column to show the length of the audio file
-    tableComponent.getHeader().addColumn("length", 2, 120);
+    tableComponent.getHeader().addColumn("length", 3, 120);
     // column to show the length of the audio file
-    tableComponent.getHeader().addColumn("type", 3, 100);
+    tableComponent.getHeader().addColumn("type", 4, 100);
     // button to load the audio file to the upper deck
-    tableComponent.getHeader().addColumn("Load to the Up Deck", 4, 180);
+    tableComponent.getHeader().addColumn("Load to the Up Deck", 5, 180);
     // button to load the audio file to the lower deck
-    tableComponent.getHeader().addColumn("Load to the down Deck", 5, 180);
+    tableComponent.getHeader().addColumn("Load to the down Deck", 6, 180);
 
     // set the model to build the table for the playlist
     tableComponent.setModel(this);
@@ -115,13 +116,16 @@ void Playlist::paintCell(juce::Graphics& g,
                          int width,
                          int height,
                          bool rowIsSelected) {
-    if (columnId == 0) {
+    if (columnId == 1) {
         g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
-    if (columnId == 1) {
+    if (columnId == 2) {
         g.drawText(trackPaths[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
     if (columnId == 3) {
+        g.drawText(trackDurations[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+    }
+    if (columnId == 4) {
         g.drawText(trackTypes[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
 }
@@ -130,7 +134,7 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
                                                    int 	columnId,
                                                    bool 	isRowSelected,
                                                    Component* existingComponentToUpdate) {
-    if (columnId == 4) {
+    if (columnId == 5) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no load button on the playlist, add the load button at the end of each row
             juce::TextButton* upbtn = new juce::TextButton{ "Load to Up Deck" };
@@ -145,7 +149,7 @@ juce::Component* Playlist::refreshComponentForCell(int 	rowNumber,
         }
     }
     
-    if (columnId == 5) {
+    if (columnId == 6) {
         if (existingComponentToUpdate == nullptr) {
             // if there is no load button on the playlist, add the load button at the end of each row
             juce::TextButton *downbtn = new juce::TextButton{ "Load to Down Deck" };
@@ -187,12 +191,12 @@ void Playlist::importButtonClicked() {
 
     if (chooser.browseForMultipleFilesToOpen()) {
         setTracks(chooser.getResults());
+
     }
 }
 void Playlist::exportButtonClicked() {
 
 }
-
 
 
 void Playlist::setTracks(juce::Array<juce::File> trackFiles){
@@ -201,6 +205,7 @@ void Playlist::setTracks(juce::Array<juce::File> trackFiles){
         for (int i = 0; i < trackFiles.size(); i++) {
             trackTitles.push_back(trackFiles[i].getFileName());
             trackPaths.push_back(trackFiles[i].getFullPathName());
+            //trackDurations.push_back(getDuration(juce::URL{ trackFiles[i] }));
             trackTypes.push_back(trackFiles[i].getFileExtension());
         }
     }
@@ -212,4 +217,15 @@ void Playlist::setTracks(juce::Array<juce::File> trackFiles){
     }
 
     tableComponent.updateContent();
+}
+
+std::string Playlist::getDuration(juce::URL audioURL) {
+    auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
+    if (reader != nullptr) // good file!
+    {
+        std::unique_ptr<juce::AudioFormatReaderSource> newSource(new juce::AudioFormatReaderSource(reader, true));
+        transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
+    }
+    double trackduration = transportSource.getLengthInSeconds();
+    return std::to_string(trackduration);
 }

@@ -23,7 +23,7 @@ class Playlist  : public juce::Component,
                   public juce::Button::Listener
 {
 public:
-    Playlist();
+    Playlist(juce::AudioFormatManager& _formatManager);
     ~Playlist() override;
 
     void paint (juce::Graphics&) override;
@@ -59,6 +59,7 @@ public:
     // create the array to store the track titles in the playlist
     std::vector <juce::String> trackTitles;
     std::vector <juce::String> trackPaths;
+    std::vector <std::string> trackDurations;
     std::vector <juce::String> trackTypes;
 
     juce::Array <juce::File> trackFiles;
@@ -66,6 +67,9 @@ public:
     // functions for extra buttons onClick
     void importButtonClicked();
     void exportButtonClicked();
+
+    // function to have the trackduration
+    std::string getDuration(juce::URL audioURL);
 
 private:
 
@@ -81,7 +85,10 @@ private:
     juce::TableListBox tableComponent;
 
     // have the transportSource to seek the duration of th track in the audio library
+    juce::AudioFormatManager& formatManager;
     juce::AudioTransportSource transportSource;
+    std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
+    juce::ResamplingAudioSource resampleSource{ &transportSource, false, 2 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Playlist)
 };

@@ -40,6 +40,7 @@ void DJApplication::loadURL(juce::URL audioURL) {
         readerSource.reset(newSource.release());
     }
 }
+
 void DJApplication::setGain(double gain) {
     if (gain < 0 || gain > 1) {
         DBG("DJApplication::setGain the gain should be between 0 and 1!");
