@@ -26,8 +26,10 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+    // similar function with the DJApplication, for loading the audio
     void loadURL(juce::URL);
 
+    // virtual function to set the listener for drawing the waveforms
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 
     // set the relaive position of the playhead

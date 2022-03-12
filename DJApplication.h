@@ -21,12 +21,20 @@ public:
     void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
 
+    // function to load the URL of the audio source
     void loadURL(juce::URL audioURL);
+
+    // the function to change the volume of the audio
     void setGain(double gain);
+
+    // the function to change the speed of the audio file
     void setSpeed(double ratio);
+
+    // the function to obtain the position of the file(both for changing the position and for drawing the waveform)
     void setPosition(double posInSecs);
     void setPositionRelative(double pos);
 
+    // the function for start and stop the audio
     void start();
     void stop();
 
@@ -34,6 +42,7 @@ public:
     double const getPositionRelative();
 
 private:
+    // for playing the tracks of the playlist, or individual audios to each deck
     juce::AudioFormatManager & formatManager;
 
     juce::AudioTransportSource transportSource;
